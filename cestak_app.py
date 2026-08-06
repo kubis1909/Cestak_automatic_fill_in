@@ -102,7 +102,7 @@ class CestakApp(tk.Tk):
         for radek, tyden in enumerate(cal.monthdayscalendar(self.rok, self.mesic)):
             for sloupec, den_cisla in enumerate(tyden):
                 if den_cisla == 0:
-                    continue  # den mimo aktuální měsíc, nekreslíme tlačítko
+                    continue  
                 d = datetime.date(self.rok, self.mesic, den_cisla)
                 tlacitko = tk.Button(
                     self.mrizka, text=str(den_cisla), width=4,
@@ -143,9 +143,7 @@ class CestakApp(tk.Tk):
         dny_serazene = sorted(self.vybrane_dny)
         dny_text = [f"{d.day}.{d.month}." for d in dny_serazene]
 
-        print("Vybrané dny (jako date):", dny_serazene)   # NOVÉ
-        print("Dny jako text pro Excel:", dny_text)         # NOVÉ
-        print("Šablona:", SABLONA)                           # NOVÉ
+
 
         cesta_k_ulozeni = filedialog.asksaveasfilename(
             defaultextension=".xlsx",
