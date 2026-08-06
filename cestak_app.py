@@ -50,7 +50,7 @@ class CestakApp(tk.Tk):
             tk.Entry(ramecek, textvariable=promenna, width=30).grid(row=i, column=1, padx=5, pady=3)
             self.pole[klic] = promenna
 
-        # rovnou předvyplníme, ať to nemusíš psát pokaždé
+    # ----------- předvyplněná pole ------------
         self.pole["odjezd"].set("Hradec Králové")
         self.pole["prijezd"].set("Náchod")
         self.pole["km"].set("100")
@@ -85,12 +85,18 @@ class CestakApp(tk.Tk):
         self._vykresli_kalendar()
 
     def _vykresli_kalendar(self):
-        # smažeme staré tlačítko-mřížku a vykreslíme novou pro aktuální měsíc
+        
         for widget in self.mrizka.winfo_children():
             widget.destroy()
         self.tlacitka_dnu = {}
 
         self.popisek_mesice.config(text=f"{MESICE[self.mesic - 1]} {self.rok}")
+
+        dny_v_tydnu = ["Po", "Ut", "St", "Ct", "Pa", "So", "Ne"]
+        for sloupec, nazev in enumerate(dny_v_tydnu):
+            tk.Label(self.mrizka, text=nazev, width=4, fg="#888888").grid(
+                row=0, column=sloupec, padx=1, pady=1
+            )
 
         cal = calendar.Calendar(firstweekday=0)
         for radek, tyden in enumerate(cal.monthdayscalendar(self.rok, self.mesic)):
@@ -100,7 +106,7 @@ class CestakApp(tk.Tk):
                 d = datetime.date(self.rok, self.mesic, den_cisla)
                 tlacitko = tk.Button(
                     self.mrizka, text=str(den_cisla), width=4,
-                    command=lambda d=d: self._klik_na_den(d),  # <- tady je ta past vyřešená
+                    command=lambda d=d: self._klik_na_den(d),  
                 )
                 tlacitko.grid(row=radek + 1, column=sloupec, padx=1, pady=1)
                 self._nastav_barvu(tlacitko, d)
@@ -108,7 +114,7 @@ class CestakApp(tk.Tk):
 
     def _nastav_barvu(self, tlacitko, d):
         if d in self.vybrane_dny:
-            tlacitko.config(bg="#4CAF50", fg="white")
+            tlacitko.config(bg="#297A29", fg="green")
         else:
             tlacitko.config(bg="SystemButtonFace", fg="black")
 
@@ -122,6 +128,8 @@ class CestakApp(tk.Tk):
             self.vybrane_dny.add(d)
         self._nastav_barvu(self.tlacitka_dnu[d], d)
 
+    
+
     # ---------- generování ----------
     def _generuj(self):
         if not self.vybrane_dny:
@@ -134,6 +142,10 @@ class CestakApp(tk.Tk):
         # datumy si seřadíme a přetvoříme do formátu "d.m." jako v šabloně
         dny_serazene = sorted(self.vybrane_dny)
         dny_text = [f"{d.day}.{d.month}." for d in dny_serazene]
+
+        print("Vybrané dny (jako date):", dny_serazene)   # NOVÉ
+        print("Dny jako text pro Excel:", dny_text)         # NOVÉ
+        print("Šablona:", SABLONA)                           # NOVÉ
 
         cesta_k_ulozeni = filedialog.asksaveasfilename(
             defaultextension=".xlsx",
